@@ -1,0 +1,25 @@
+site_name: GridDrawer
+theme:
+  name: material
+plugins:
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: id
+          name: Indonesian
+          build: true
+nav:
+  - Home: index.md
+  - GridDrawer: grid_drawer.md
+  - About: about.md
+  - Translate:
+      - Beranda: indonesia/index.md
+      - GridDrawer: indonesia/grid_drawer.md
+      - Tentang: indonesia/tentang.md
+markdown_extensions:
+  - toc:
+      permalink: true

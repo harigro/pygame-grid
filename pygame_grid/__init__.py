@@ -1,89 +1,138 @@
-# Copyright 2021 Casey Devet
-#
-# Permission is hereby granted, free of charge, to any person obtaining a 
-# copy of this software and associated documentation files (the "Software"), 
-# to deal in the Software without restriction, including without limitation 
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-# and/or sell copies of the Software, and to permit persons to whom the 
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included 
-# in all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS 
-# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
-# DEALINGS IN THE SOFTWARE.
-
-# Load the pygame module
 import pygame
 
-def draw_grid (x_dist=100, y_dist=100, color="black", opacity=0.5, 
-        thickness=3, x_minor_dist=20, y_minor_dist=20, 
-        minor_color="black", minor_opacity=0.25, minor_thickness=1):
-    '''
-    Draw gridlines on the current pygame screen surface.
-    '''
+class GridDrawer:
+    """
+    A class for drawing a customizable grid on a Pygame screen.
 
-    # Get the active pygame screen and its dimensions
-    screen = pygame.display.get_surface()
-    if screen is None:
-        raise RuntimeError("There is no pygame screen open!")
-    width, height = screen.get_size()
+    Attributes:
+        x_dist ( int ): Distance between major vertical grid lines in pixels.
+        y_dist ( int ): Distance between major horizontal grid lines in pixels.
+        color ( str ): Color of the major grid lines.
+        opacity ( float ): Opacity of the major grid lines, between 0.0 and 1.0.
+        thickness ( int ): Thickness of the major grid lines in pixels.
+        x_minor_dist ( int ): Distance between minor vertical grid lines in pixels.
+        y_minor_dist ( int ): Distance between minor horizontal grid lines in pixels.
+        minor_color ( str ): Color of the minor grid lines.
+        minor_opacity ( float ): Opacity of the minor grid lines, between 0.0 and 1.0.
+        minor_thickness ( int ): Thickness of the minor grid lines in pixels.
+    """
 
-    # Create the font to use for labels
-    font = pygame.font.SysFont("Arial", 12)
+    def __init__(self, 
+                 x_dist: int = 100, 
+                 y_dist: int = 100, 
+                 color: str = "black", 
+                 opacity: float = 0.5, 
+                 thickness: int = 3, 
+                 x_minor_dist: int = 20, 
+                 y_minor_dist: int = 20, 
+                 minor_color: str = "black", 
+                 minor_opacity: float = 0.25, 
+                 minor_thickness: int = 1) -> None:
+        """
+        Initializes the GridDrawer with customizable grid properties.
+        
+        """
+        self.x_dist = x_dist
+        self.y_dist = y_dist
+        self.color = color
+        self.opacity = opacity
+        self.thickness = thickness
+        self.x_minor_dist = x_minor_dist
+        self.y_minor_dist = y_minor_dist
+        self.minor_color = minor_color
+        self.minor_opacity = minor_opacity
+        self.minor_thickness = minor_thickness
 
-    # Draw thin vertical lines
-    for x in range(x_minor_dist, width, x_minor_dist):
-        # Don't draw the line if it coincides with a thick line
-        if x % x_dist != 0:
-            # Create a thin line surface and blit it on the screen
-            line_surface = pygame.Surface((minor_thickness, height), pygame.SRCALPHA)
-            line_surface.fill(minor_color)
-            line_surface.set_alpha(int(minor_opacity * 255))
-            screen.blit(line_surface, (x - minor_thickness // 2, 0))
+    def draw_minor_vertical_lines(self, screen: pygame.Surface, width: int, height: int) -> None:
+        """
+        Draws minor vertical grid lines on the screen.
 
-    # Draw thin horizontal lines
-    for y in range(y_minor_dist, height, y_minor_dist):
-        # Don't draw the line if it coincides with a thick line
-        if y % y_dist != 0:
-            # Create a thin line surface and blit it on the screen
-            line_surface = pygame.Surface((width, 1), pygame.SRCALPHA)
-            line_surface.fill(minor_color)
-            line_surface.set_alpha(int(minor_opacity * 255))
-            screen.blit(line_surface, (0, y - minor_thickness // 2))
+        Args:
+            screen ( pygame.Surface ): The Pygame surface to draw on.
+            width ( int ): Width of the screen.
+            height ( int ): Height of the screen.
+        """
+        for x in range(self.x_minor_dist, width, self.x_minor_dist):
+            if x % self.x_dist != 0:
+                line_surface = pygame.Surface((self.minor_thickness, height), pygame.SRCALPHA)
+                line_surface.fill(self.minor_color)
+                line_surface.set_alpha(int(self.minor_opacity * 255))
+                screen.blit(line_surface, (x - self.minor_thickness // 2, 0))
 
-    # Draw thick vertical lines
-    for x in range(x_dist, width, x_dist):
-        # Create a thick line surface and blit it on the screen
-        line_surface = pygame.Surface((3, height), pygame.SRCALPHA)
-        line_surface.fill(color)
-        line_surface.set_alpha(int(opacity * 255))
-        screen.blit(line_surface, (x - thickness // 2, 0))
+    def draw_minor_horizontal_lines(self, screen: pygame.Surface, width: int, height: int) -> None:
+        """
+        Draws minor horizontal grid lines on the screen.
 
-        # Create a label for the thick line
-        label = font.render(str(x), True, color)
-        label.set_alpha(int(opacity * 255))
-        label = pygame.transform.rotate(label, -90)
-        screen.blit(label, (x - 13, 1))
+        Args:
+            screen ( pygame.Surface ): The Pygame surface to draw on.
+            width ( in t): Width of the screen.
+            height ( int ): Height of the screen.
+        """
+        for y in range(self.y_minor_dist, height, self.y_minor_dist):
+            if y % self.y_dist != 0:
+                line_surface = pygame.Surface((width, self.minor_thickness), pygame.SRCALPHA)
+                line_surface.fill(self.minor_color)
+                line_surface.set_alpha(int(self.minor_opacity * 255))
+                screen.blit(line_surface, (0, y - self.minor_thickness // 2))
 
-    # Draw thick horizontal lines
-    for y in range(y_dist, height, y_dist):
-        # Create a thick line surface and blit it on the screen
-        line_surface = pygame.Surface((width, 3), pygame.SRCALPHA)
-        line_surface.fill(color)
-        line_surface.set_alpha(int(opacity * 255))
-        screen.blit(line_surface, (0, y - thickness // 2))
+    def draw_major_vertical_lines(self, screen: pygame.Surface, width: int, height: int, font: bool = False) -> None:
+        """
+        Draws major vertical grid lines with labels on the screen.
 
-        # Create a label for the thick line
-        label = font.render(str(y), True, color)
-        label.set_alpha(int(opacity * 255))
-        screen.blit(label, (1, y - 13))
+        Args:
+            screen ( pygame.Surface ): The Pygame surface to draw on.
+            width ( int ): Width of the screen.
+            height ( int ): Height of the screen.
+            font ( True | False ): The font used for labeling grid lines.
+        """
+        font_a = pygame.font.SysFont("Arial", 12)
+        for x in range(self.x_dist, width, self.x_dist):
+            line_surface = pygame.Surface((self.thickness, height), pygame.SRCALPHA)
+            line_surface.fill(self.color)
+            line_surface.set_alpha(int(self.opacity * 255))
+            screen.blit(line_surface, (x - self.thickness // 2, 0))
+            if font:
+                label = font_a.render(str(x), True, self.color)
+                label.set_alpha(int(self.opacity * 255))
+                label = pygame.transform.rotate(label, -90)
+                screen.blit(label, (x - 13, 1))
 
+    def draw_major_horizontal_lines(self, screen: pygame.Surface, width: int, height: int, font: bool = False) -> None:
+        """
+        Draws major horizontal grid lines with labels on the screen.
 
-# The function that will be imported with "import *"
-__all__ = ["draw_grid"]
+        Args:
+            screen ( pygame.Surface ): The Pygame surface to draw on.
+            width ( int ): Width of the screen.
+            height ( int): Height of the screen.
+            font : The font used for labeling grid lines.
+        """
+        font_a = pygame.font.SysFont("Arial", 12)
+        for y in range(self.y_dist, height, self.y_dist):
+            line_surface = pygame.Surface((width, self.thickness), pygame.SRCALPHA)
+            line_surface.fill(self.color)
+            line_surface.set_alpha(int(self.opacity * 255))
+            screen.blit(line_surface, (0, y - self.thickness // 2))
+            if font:
+                label = font_a.render(str(y), True, self.color)
+                label.set_alpha(int(self.opacity * 255))
+                screen.blit(label, (1, y - 13))
+
+    def draw_grid(self) -> None:
+        """
+        Draws the entire grid (minor and major lines with labels) on the current Pygame surface.
+
+        Raises:
+            RuntimeError: If no Pygame screen is open.
+        """
+        screen = pygame.display.get_surface()
+        if screen is None:
+            raise RuntimeError("There is no pygame screen open!")
+        
+        width, height = screen.get_size()
+        font = pygame.font.SysFont("Arial", 12)
+
+        self.draw_minor_vertical_lines(screen, width, height)
+        self.draw_minor_horizontal_lines(screen, width, height)
+        self.draw_major_vertical_lines(screen, width, height, font)
+        self.draw_major_horizontal_lines(screen, width, height, font)
