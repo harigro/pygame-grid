@@ -130,9 +130,8 @@ class GridDrawer:
             raise RuntimeError("There is no pygame screen open!")
         
         width, height = screen.get_size()
-        font = pygame.font.SysFont("Arial", 12)
 
         self.draw_minor_vertical_lines(screen, width, height)
         self.draw_minor_horizontal_lines(screen, width, height)
-        self.draw_major_vertical_lines(screen, width, height, font)
-        self.draw_major_horizontal_lines(screen, width, height, font)
+        self.draw_major_vertical_lines(screen, width, height)
+        self.draw_major_horizontal_lines(screen, width, height)
